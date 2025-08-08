@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 5000;
-
+const response = await fetch(url);
+const text = await response.text();
 // Middleware
 app.use(express.static("public"));
 app.use(express.json());
@@ -62,7 +63,17 @@ app.post("/api/resume-workflow", async (req, res) => {
                 count: 0
               });
             }
-            const data = await response.json();
+            let data;
+            try {
+              data = JSON.parse(text);
+            } catch (e) {
+              console.error("Failed to parse JSON (application/json):", e);
+              return res.status(500).json({
+                error: true,
+                message: "Invalid JSON response from n8n",
+                raw: text
+              });
+            }
             res.json(data);
         } else {
             // For file uploads and other content types, stream the raw request
@@ -76,7 +87,17 @@ app.post("/api/resume-workflow", async (req, res) => {
                 },
             });
 
-            const data = await response.json();
+            let data;
+            try {
+              data = JSON.parse(text);
+            } catch (e) {
+              console.error("Failed to parse JSON (streamed request):", e);
+              return res.status(500).json({
+                error: true,
+                message: "Invalid JSON response from n8n",
+                raw: text
+              });
+            }
             res.json(data);
         }
     } catch (error) {
