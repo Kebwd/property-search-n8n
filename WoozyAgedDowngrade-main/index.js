@@ -53,6 +53,15 @@ app.post("/api/resume-workflow", async (req, res) => {
                 body: JSON.stringify(req.body),
             });
 
+            if (!data) {
+              return res.json({
+                error: true,
+                message: "Empty or invalid response from Octoparse",
+                websites: [],
+                matched: false,
+                count: 0
+              });
+            }
             const data = await response.json();
             res.json(data);
         } else {
