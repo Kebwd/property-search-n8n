@@ -11,7 +11,7 @@ app.post("/api/start-workflow", async (req, res) => {
     try {
         // Replace with your actual n8n webhook URL
         const n8nWebhookUrl =
-            "https://applechan8551.app.n8n.cloud/webhook/497742a8-de85-414d-aa5e-12b5c510e7c7";
+            "https://rightpick.app.n8n.cloud/webhook/497742a8-de85-414d-aa5e-12b5c510e7c7";
 
         const response = await fetch(n8nWebhookUrl, {
             method: "POST",
