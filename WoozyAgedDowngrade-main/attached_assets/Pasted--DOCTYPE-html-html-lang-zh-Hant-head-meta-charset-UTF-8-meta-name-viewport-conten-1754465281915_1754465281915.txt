@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>物業價格查詢工具</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 1rem;
+      background-color: #f9f9f9;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow-x: auto;
+    }
+    thead {
+      background-color: #333;
+      color: white;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+      min-width: 120px;
+    }
+    th:nth-child(-n+3) {
+      background-color: #DAF2D0;
+      color: black;
+    }
+    th:nth-child(n+4):nth-child(-n+12) {
+      background-color: #CAEDFB;
+      color: black;
+    }
+    th:nth-child(n+13):nth-child(-n+18) {
+      background-color: #F2CEEF;
+      color: black;
+    }
+    th:nth-child(n+19):nth-child(-n+28) {
+      background-color: #FBE2D5;
+      color: black;
+    }
+    th:nth-child(n+29) {
+      background-color: #D0D0D0;
+      color: black;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .table-wrapper {
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>物業價格查詢工具</h1>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>用戶地址</th>
+          <th>用戶單位面積</th>
+          <th>用戶樓層</th>
+          <th>物業種類1</th>
+          <th>地址1</th>
+          <th>樓層1</th>
+          <th>單位1</th>
+          <th>單位面積(平方米)1</th>
+          <th>成交價1</th>
+          <th>登記日期1</th>
+          <th>URL1</th>
+          <th>距離1</th>
+          <th>物業種類2</th>
+          <th>地區2</th>
+          <th>地址2</th>
+          <th>售價2</th>
+          <th>URL2</th>
+          <th>距離2</th>
+          <th>地區3</th>
+          <th>位置3</th>
+          <th>屋苑名稱3</th>
+          <th>樓層單位3</th>
+          <th>單位面積(平方米)3</th>
+          <th>戶型3</th>
+          <th>成交金額3</th>
+          <th>成交日期3</th>
+          <th>URL3</th>
+          <th>距離3</th>
+          <th>AI估價</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 這裡可以插入資料列 -->
+        {{ $json.htmlRows }}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

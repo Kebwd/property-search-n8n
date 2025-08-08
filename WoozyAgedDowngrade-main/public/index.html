@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>HK Property Search</title>
+        <style>
+            :root {
+                --apple-light-gray: #f5f5f7;
+                --apple-dark-gray: #1d1d1f;
+                --apple-blue: #0071e3;
+                --apple-border: #d2d2d7;
+                --apple-hover-blue: #0062c3;
+                --apple-green: #30d158;
+                --apple-orange: #ff9500;
+            }
+
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    Helvetica, Arial, sans-serif;
+                background-color: var(--apple-light-gray);
+                color: var(--apple-dark-gray);
+                margin: 0;
+                padding: 0;
+                line-height: 1.5;
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+
+            .container {
+                max-width: 980px;
+                margin: 0 auto;
+                padding: 40px 20px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            header {
+                text-align: center;
+                margin-bottom: 48px;
+            }
+
+            h1 {
+                font-size: 40px;
+                font-weight: 600;
+                margin-bottom: 12px;
+                letter-spacing: -0.5px;
+            }
+
+            .subhead {
+                font-size: 21px;
+                color: #86868b;
+                margin-bottom: 24px;
+                font-weight: 400;
+            }
+
+            /* Start Page Styles */
+            .start-page {
+                display: block;
+                text-align: center;
+            }
+
+            .start-card {
+                background-color: white;
+                border-radius: 18px;
+                padding: 60px 40px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+                margin-bottom: 24px;
+            }
+
+            .start-icon {
+                font-size: 64px;
+                margin-bottom: 24px;
+                color: var(--apple-blue);
+            }
+
+            .start-title {
+                font-size: 28px;
+                font-weight: 600;
+                margin-bottom: 16px;
+            }
+
+            .start-description {
+                font-size: 17px;
+                color: #86868b;
+                margin-bottom: 32px;
+                line-height: 1.6;
+            }
+
+            .start-btn {
+                background-color: var(--apple-blue);
+                color: white;
+                border: none;
+                border-radius: 12px;
+                padding: 16px 32px;
+                font-size: 19px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                min-width: 200px;
+            }
+
+            .start-btn:hover {
+                background-color: var(--apple-hover-blue);
+                transform: translateY(-1px);
+            }
+
+            .start-btn:disabled {
+                background-color: #86868b;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            .status-indicator {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 20px;
+                border-radius: 20px;
+                font-size: 15px;
+                font-weight: 500;
+                margin-top: 20px;
+            }
+
+            .status-indicator.loading {
+                background-color: #fff3cd;
+                color: #856404;
+                border: 1px solid #ffeaa7;
+            }
+
+            .status-indicator.success {
+                background-color: #d1f2eb;
+                color: #0c5460;
+                border: 1px solid #7dcea0;
+            }
+
+            .status-indicator.error {
+                background-color: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+
+            .spinner {
+                width: 16px;
+                height: 16px;
+                border: 2px solid transparent;
+                border-top: 2px solid currentColor;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            /* Search Form Styles */
+            .search-page {
+                display: none;
+            }
+
+            .search-form {
+                background-color: white;
+                border-radius: 18px;
+                padding: 40px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            }
+
+            .form-group {
+                margin-bottom: 24px;
+            }
+
+            label {
+                display: block;
+                font-size: 17px;
+                font-weight: 500;
+                margin-bottom: 8px;
+            }
+
+            input:not([type="checkbox"]),
+            select {
+                width: 100%;
+                padding: 12px 16px;
+                font-size: 17px;
+                border: 1px solid var(--apple-border);
+                border-radius: 12px;
+                background-color: rgba(0, 0, 0, 0.01);
+                transition: border-color 0.2s;
+                box-sizing: border-box;
+                appearance: none;
+            }
+
+            input[type="checkbox"] {
+                width: 18px !important;
+                height: 18px !important;
+                margin-right: 12px;
+                cursor: pointer;
+                appearance: auto;
+                -webkit-appearance: checkbox;
+                -moz-appearance: checkbox;
+            }
+
+            input:focus,
+            select:focus {
+                outline: none;
+                border-color: var(--apple-blue);
+            }
+
+            .form-row {
+                display: flex;
+                gap: 20px;
+            }
+
+            .form-row .form-group {
+                flex: 1;
+            }
+
+            .submit-btn {
+                background-color: var(--apple-blue);
+                color: white;
+                border: none;
+                border-radius: 12px;
+                padding: 12px 22px;
+                font-size: 17px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background-color 0.2s;
+                width: 100%;
+                margin-top: 8px;
+            }
+
+            .submit-btn:hover {
+                background-color: var(--apple-hover-blue);
+            }
+
+            .submit-btn:disabled {
+                background-color: #86868b;
+                cursor: not-allowed;
+            }
+
+            .disclaimer {
+                font-size: 14px;
+                color: #86868b;
+                text-align: center;
+                margin-top: 40px;
+                line-height: 1.5;
+            }
+
+            .district-group {
+                display: none;
+            }
+
+            #results-section {
+                margin-top: 24px;
+                padding: 20px;
+                background-color: #f8f9fa;
+                border-radius: 12px;
+                display: none;
+            }
+
+            #results-section.error {
+                color: #dc3545;
+                background-color: #f8d7da;
+                border: 1px solid #f5c6cb;
+            }
+
+            #results-section.success {
+                color: #155724;
+                background-color: #d4edda;
+                border: 1px solid #c3e6cb;
+            }
+
+            .table-wrapper {
+                background-color: white;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .table-wrapper table {
+                border-collapse: collapse;
+                font-size: 14px;
+            }
+
+            .table-wrapper th,
+            .table-wrapper td {
+                border: 1px solid #ddd;
+                padding: 12px 8px;
+                text-align: left;
+                vertical-align: top;
+            }
+
+            .table-wrapper th {
+                background-color: #daf2d0 !important;
+                color: black !important;
+                font-weight: 600;
+                white-space: nowrap;
+            }
+
+            .table-wrapper tbody tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            .table-wrapper tbody tr:hover {
+                background-color: #f0f8f0;
+            }
+
+            .table-wrapper a {
+                color: var(--apple-blue);
+                text-decoration: none;
+            }
+
+            .table-wrapper a:hover {
+                text-decoration: underline;
+            }
+
+            .loading {
+                opacity: 0.7;
+            }
+
+            .back-btn {
+                background-color: #86868b;
+                color: white;
+                border: none;
+                border-radius: 12px;
+                padding: 8px 16px;
+                font-size: 15px;
+                font-weight: 500;
+                cursor: pointer;
+                margin-bottom: 20px;
+                transition: background-color 0.2s;
+            }
+
+            .back-btn:hover {
+                background-color: #6d6d70;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Start Page -->
+            <div id="startPage" class="start-page">
+                <header>
+                    <h1>Hong Kong Property Search</h1>
+                    <p class="subhead">
+                        Find property information with precision
+                    </p>
+                </header>
+
+                <div class="start-card">
+                    <div class="start-icon">🏢</div>
+                    <h2 class="start-title">Ready to Search Properties?</h2>
+                    <p class="start-description">
+                        Start your property search journey. We'll initialize our
+                        search system and prepare everything you need to find
+                        the property in Hong Kong.
+                    </p>
+                    <button id="startWorkflowBtn" class="start-btn">
+                        Initialize Search System
+                    </button>
+
+                    <div
+                        id="workflowStatus"
+                        class="status-indicator"
+                        style="display: none"
+                    >
+                        <span class="spinner"></span>
+                        <span>Starting workflow...</span>
+                    </div>
+                </div>
+
+                <p class="disclaimer">
+                    The information provided will be used solely for property
+                    search purposes.<br />
+                    We respect your privacy and handle all data with strict
+                    confidentiality.
+                </p>
+            </div>
+
+            <!-- Search Form Page -->
+            <div id="searchPage" class="search-page">
+                <button id="backBtn" class="back-btn">← Back to Start</button>
+
+                <header>
+                    <h1>Hong Kong Property Search</h1>
+                    <p class="subhead">Enter your search criteria</p>
+                </header>
+
+                <form id="propertySearchForm" class="search-form">
+                    <div class="form-group">
+                        <label for="address">Full Address 用戶地址</label>
+                        <input
+                            type="text"
+                            id="address"
+                            name="address"
+                            placeholder="e.g. 18 Tai Ping Shan Street"
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="region">Hong Kong Region 區域</label>
+                        <select id="region" name="region">
+                            <option value="" disabled selected>
+                                Select your region 地區
+                            </option>
+                            <option value="hk-island">
+                                Hong Kong Island 港島
+                            </option>
+                            <option value="kowloon">Kowloon 九龍</option>
+                            <option value="new-territories">
+                                New Territories 新界
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Hong Kong Island Districts -->
+                    <div id="hk-island-districts" class="district-group">
+                        <div class="form-group">
+                            <label for="hk-island-district">District</label>
+                            <select id="hk-island-district" name="district">
+                                <option value="" disabled selected>
+                                    Select your district
+                                </option>
+                                <option value="central-western">
+                                    Central and Western 中西區
+                                </option>
+                                <option value="wan-chai">Wan Chai 灣仔</option>
+                                <option value="eastern">Eastern 東區</option>
+                                <option value="southern">Southern 南區</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Kowloon Districts -->
+                    <div id="kowloon-districts" class="district-group">
+                        <div class="form-group">
+                            <label for="kowloon-district">District</label>
+                            <select id="kowloon-district" name="district">
+                                <option value="" disabled selected>
+                                    Select your district
+                                </option>
+                                <option value="yau-tsim-mong">
+                                    Yau Tsim Mong 油尖旺
+                                </option>
+                                <option value="sham-shui-po">
+                                    Sham Shui Po 深水埗
+                                </option>
+                                <option value="kowloon-city">
+                                    Kowloon City 九龍城
+                                </option>
+                                <option value="wong-tai-sin">
+                                    Wong Tai Sin 黃大仙
+                                </option>
+                                <option value="kwun-tong">
+                                    Kwun Tong 觀塘
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- New Territories Districts -->
+                    <div id="new-territories-districts" class="district-group">
+                        <div class="form-group">
+                            <label for="new-territories-district"
+                                >District</label
+                            >
+                            <select
+                                id="new-territories-district"
+                                name="district"
+                            >
+                                <option value="" disabled selected>
+                                    Select your district
+                                </option>
+                                <option value="kwai-tsing">
+                                    Kwai Tsing 葵青
+                                </option>
+                                <option value="tsuen-wan">
+                                    Tsuen Wan 荃灣
+                                </option>
+                                <option value="tuen-mun">Tuen Mun 屯門</option>
+                                <option value="yuen-long">
+                                    Yuen Long 元朗
+                                </option>
+                                <option value="north">North 北區</option>
+                                <option value="tai-po">Tai Po 大埔</option>
+                                <option value="sha-tin">Sha Tin 沙田</option>
+                                <option value="sai-kung">Sai Kung 西貢</option>
+                                <option value="islands">Islands 離島</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label
+                            for="include-mainland"
+                            style="
+                                display: flex;
+                                align-items: center;
+                                cursor: pointer;
+                                font-size: 17px;
+                                font-weight: 500;
+                            "
+                        >
+                            <input
+                                type="checkbox"
+                                id="include-mainland"
+                                name="includeMainland"
+                            />
+                            <span
+                                >Include Mainland China Properties
+                                包括內地物業</span
+                            >
+                        </label>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="unit-area"
+                                >Unit Area 單位面積(呎)</label
+                            >
+                            <input
+                                type="number"
+                                id="unit-area"
+                                name="unitArea"
+                                placeholder="e.g. 450"
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="floor">Floor Level 樓層</label>
+                            <input
+                                type="number"
+                                id="floor"
+                                name="floorLevel"
+                                placeholder="e.g. 15"
+                            />
+                        </div>
+                    </div>
+
+                    <button type="submit" id="searchButton" class="submit-btn">
+                        Search Properties
+                    </button>
+                </form>
+
+                <div id="results-section" class="results"></div>
+
+                <p class="disclaimer">
+                    Complete your search criteria above to find matching
+                    properties.
+                </p>
+            </div>
+        </div>
+
+        <script>
+            let resumeUrl = null;
+
+            // Start workflow button handler
+            document
+                .getElementById("startWorkflowBtn")
+                .addEventListener("click", async function () {
+                    const button = this;
+                    const status = document.getElementById("workflowStatus");
+
+                    // Show loading state
+                    button.textContent = "Initializing...";
+                    button.disabled = true;
+                    status.style.display = "inline-flex";
+                    status.className = "status-indicator loading";
+                    status.innerHTML =
+                        '<span class="spinner"></span><span>Starting workflow...</span>';
+
+                    try {
+                        // Trigger the n8n workflow with initial data
+                        const response = await fetch("/api/start-workflow", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                action: "initialize",
+                                timestamp: new Date().toISOString(),
+                            }),
+                        });
+
+                        const data = await response.json();
+                        console.log("n8n initialization response:", data);
+
+                        if (data.resumeUrl) {
+                            // Store resume URL for the search form
+                            resumeUrl = data.resumeUrl;
+
+                            // Show success and transition to search form
+                            status.className = "status-indicator success";
+                            status.innerHTML =
+                                "<span>✓</span><span>System ready!</span>";
+
+                            setTimeout(() => {
+                                document.getElementById(
+                                    "startPage",
+                                ).style.display = "none";
+                                document.getElementById(
+                                    "searchPage",
+                                ).style.display = "block";
+                            }, 1500);
+                        } else {
+                            // Handle direct response without resumeUrl
+                            status.className = "status-indicator error";
+                            status.innerHTML = `<span>⚠</span><span>n8n回應異常: ${JSON.stringify(data)}</span>`;
+                            console.error("Expected resumeUrl but got:", data);
+                        }
+                    } catch (error) {
+                        console.error("Error starting workflow:", error);
+                        status.className = "status-indicator error";
+                        status.innerHTML =
+                            "<span>❌</span><span>Failed to start workflow</span>";
+                    } finally {
+                        // Reset button after delay
+                        setTimeout(() => {
+                            button.textContent = "Initialize Search System";
+                            button.disabled = false;
+                        }, 2000);
+                    }
+                });
+
+            // Back button handler
+            document
+                .getElementById("backBtn")
+                .addEventListener("click", function () {
+                    document.getElementById("searchPage").style.display =
+                        "none";
+                    document.getElementById("startPage").style.display =
+                        "block";
+                    // Reset workflow status
+                    document.getElementById("workflowStatus").style.display =
+                        "none";
+                    resumeUrl = null;
+                });
+
+            // Handle region selection to show/hide district dropdowns
+            document
+                .getElementById("region")
+                .addEventListener("change", function () {
+                    const selectedRegion = this.value;
+
+                    // Hide all district groups
+                    document
+                        .querySelectorAll(".district-group")
+                        .forEach((group) => {
+                            group.style.display = "none";
+                        });
+
+                    // Show the selected region's district group
+                    if (selectedRegion) {
+                        const districtGroup = document.getElementById(
+                            selectedRegion + "-districts",
+                        );
+                        if (districtGroup) {
+                            districtGroup.style.display = "block";
+                        }
+                    }
+                });
+
+            // Handle form submission
+            document
+                .getElementById("propertySearchForm")
+                .addEventListener("submit", async function (e) {
+                    e.preventDefault();
+
+                    if (!resumeUrl) {
+                        alert(
+                            "Please initialize the search system first by going back to the start page.",
+                        );
+                        return;
+                    }
+
+                    const button = document.getElementById("searchButton");
+                    const results = document.getElementById("results-section");
+
+                    // Show loading state immediately
+                    button.textContent = "Searching Properties...";
+                    button.classList.add("loading");
+                    button.disabled = true;
+
+                    // Show loading message in results section
+                    results.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div class="spinner" style="margin: 0 auto 20px; width: 40px; height: 40px; border-width: 4px;"></div>
+                        <h3>Searching Properties...</h3>
+                        <p>Please wait while we search for matching properties. This may take a few moments.</p>
+                    </div>
+                `;
+                    results.className = "results";
+                    results.style.display = "block";
+
+                    try {
+                        // Collect form data
+                        const formData = {
+                            address: document.getElementById("address").value,
+                            region: document.getElementById("region").value,
+                            district: getSelectedDistrict(),
+                            includeMainland:
+                                document.getElementById("include-mainland")
+                                    .checked,
+                            unitArea:
+                                document.getElementById("unit-area").value,
+                            floorLevel: document.getElementById("floor").value,
+                        };
+
+                        // Continue workflow with search criteria
+                        const response = await fetch(
+                            `/api/resume-workflow?resumeUrl=${encodeURIComponent(resumeUrl)}`,
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(formData),
+                            },
+                        );
+
+                        if (!response.ok) {
+                            throw new Error(
+                                `HTTP error! status: ${response.status}`,
+                            );
+                        }
+
+                        const data = await response.json();
+                        console.log("n8n response:", data); // Debug log
+
+                        // Check if this is just a workflow start confirmation
+                        if (data && data.message === "Workflow was started") {
+                            // Keep showing loading - workflow is still processing
+                            results.innerHTML = `
+                            <div style="text-align: center; padding: 40px;">
+                                <div class="spinner" style="margin: 0 auto 20px; width: 40px; height: 40px; border-width: 4px;"></div>
+                                <h3>Workflow Started Successfully</h3>
+                                <p>Your property search is now processing. This may take several minutes...</p>
+                                <p style="color: #666; font-size: 14px;">The workflow will automatically return results when complete.</p>
+                            </div>
+                        `;
+                            results.className = "results";
+
+                            // Don't reset button yet - keep it disabled
+                            button.textContent = "Processing Search...";
+                            return; // Exit early, don't reset button
+                        }
+
+                        // Handle success/failure response from n8n
+                        if (data && data.response) {
+                            // Store the response and redirect to results page
+                            localStorage.setItem(
+                                "propertySearchResults",
+                                JSON.stringify(data),
+                            );
+
+                            // Show success message briefly before redirect
+                            results.innerHTML = `
+                                <div style="text-align: center; padding: 40px;">
+                                    <h3 style="color: #30d158;">✓ 搜索完成！</h3>
+                                    <p>正在跳轉到結果頁面...</p>
+                                </div>
+                            `;
+                            results.className = "results success";
+
+                            // Redirect to results page after a brief delay
+                            setTimeout(() => {
+                                window.location.href = "/results.html";
+                            }, 1500);
+                            return;
+                        }
+
+                        // Handle new n8n response format: [{"htmlRows": "...", "resumeUrl": "..."}]
+                        if (
+                            data &&
+                            Array.isArray(data) &&
+                            data.length > 0 &&
+                            data[0].htmlRows
+                        ) {
+                            const responseData = data[0];
+                            const htmlContent = responseData.htmlRows;
+
+                            // Update resumeUrl if provided for future searches
+                            if (responseData.resumeUrl) {
+                                resumeUrl = responseData.resumeUrl;
+                            }
+
+                            // Store results in localStorage and redirect to results page
+                            localStorage.setItem(
+                                "propertySearchResults",
+                                htmlContent,
+                            );
+
+                            // Show success message briefly before redirect
+                            results.innerHTML = `
+                                <div style="text-align: center; padding: 40px;">
+                                    <h3 style="color: #30d158;">✓ 搜索完成！</h3>
+                                    <p>正在跳轉到結果頁面...</p>
+                                </div>
+                            `;
+                            results.className = "results success";
+
+                            // Redirect to results page after a brief delay
+                            setTimeout(() => {
+                                window.location.href = "/results.html";
+                            }, 1500);
+                        } else {
+                            // Show workflow status or no results
+                            if (
+                                data &&
+                                data.message &&
+                                data.message !== "Workflow was started"
+                            ) {
+                                results.innerHTML = `
+                                <div style="text-align: center; padding: 40px;">
+                                    <h3>Workflow Status</h3>
+                                    <p>${data.message}</p>
+                                </div>
+                            `;
+                            } else {
+                                results.innerHTML = `
+                                <div style="text-align: center; padding: 40px;">
+                                    <h3>No Results Found</h3>
+                                    <p>Your search did not return any matching properties.</p>
+                                    <p>Try adjusting your search criteria and search again.</p>
+                                </div>
+                            `;
+                            }
+                            results.className = "results";
+                        }
+                    } catch (error) {
+                        console.error("Error:", error);
+                        results.innerHTML = `
+                        <div style="text-align: center; padding: 40px;">
+                            <h3>Search Error</h3>
+                            <p>Failed to search properties. Please try again.</p>
+                            <p style="color: #666; font-size: 14px;">${error.message}</p>
+                        </div>
+                    `;
+                        results.className = "results error";
+                    } finally {
+                        // Reset button state
+                        button.textContent = "Search Properties";
+                        button.classList.remove("loading");
+                        button.disabled = false;
+                    }
+                });
+
+            // Helper function to get selected district
+            function getSelectedDistrict() {
+                const region = document.getElementById("region").value;
+                if (region) {
+                    const districtSelect = document.getElementById(
+                        region + "-district",
+                    );
+                    return districtSelect ? districtSelect.value : "";
+                }
+                return "";
+            }
+
+            // Add a new section for results display and modify the form submission to populate it
+            // The original code had an empty div with id="results". We are renaming it to "results-section"
+            // and will populate it with the HTML table from n8n.
+
+            // The previous changes were to fix ID references which are now incorporated into the main logic.
+            // The core change is to parse the `htmlRows` and display it as a table.
+        </script>
+    </body>
+</html>
